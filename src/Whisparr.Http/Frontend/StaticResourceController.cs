@@ -40,6 +40,11 @@ namespace Whisparr.Http.Frontend
             return await MapResource("Content/" + path);
         }
 
+        // Two routes on one action: the empty template has no {path} slot, so the
+        // operation generated for it declared a required path parameter that could
+        // never be resolved, which made the whole document invalid. Neither route
+        // serves API data, they serve the frontend, so both stay out of the document.
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet("")]
         [HttpGet("/{**path:regex(^(?!(api|feed|docs)/).*)}")]
         public async Task<IActionResult> Index([FromRoute] string path)
